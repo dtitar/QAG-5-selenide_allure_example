@@ -1,20 +1,15 @@
 package scenarios;
 
 import com.codeborne.selenide.Configuration;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Owner;
-import io.qameta.allure.Story;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.*;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import steps.Websteps;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -33,13 +28,16 @@ public class GithubIssueNameTest {
     }
 
     @Test
-    @Owner("dtitar")
-    @Feature("Поиск Github Issue")
-    @Story("Поиск github issue с использованием чистого selenide")
-    @DisplayName("Проверка отображения issue")
+    @DisplayName("Проверка отображения issue с использованием чистого selenide")
     final void shouldDisplayGithubIssuePureSelenide() {
-        open(BASE_URL);
+        //Ожидалось, что данный листенер будет работать только для этого сценария, но он добавляет в аллюр код ко всем трем сценариям
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        Allure.label("owner", "dtitar");
+        Allure.feature("Поиск Github Issue");
+        Allure.story("Поиск github issue с использованием чистого selenide");
+        Allure.description("Описание сценария проверки отображения issue с использованием чистого selenide");
 
+        open(BASE_URL);
         $(".header-search-input").click();
         $(".header-search-input").sendKeys(REPOSITORY);
         $(".header-search-input").submit();
@@ -54,7 +52,7 @@ public class GithubIssueNameTest {
     @Owner("dtitar")
     @Feature("Поиск Github Issue")
     @Story("Поиск github issue с использованием лямбда-шагов")
-    @DisplayName("Проверка отображения issue")
+    @Description("Проверка отображения issue с использованием лямбда-шагов")
     final void shouldDisplayGithubIssueLambda() {
         step("Открываем главную страницу", (step) -> {
             step.parameter("url", BASE_URL);
@@ -80,6 +78,7 @@ public class GithubIssueNameTest {
         step("Проверяем что Issue с номером {step} существует", (step) -> {
             step.parameter("issue", ISSUE_NUMBER);
             $(withText("#" + ISSUE_NUMBER)).should(exist);
+
         });
     }
 
@@ -87,7 +86,7 @@ public class GithubIssueNameTest {
     @Owner("dtitar")
     @Feature("Поиск Github Issue")
     @Story("Поиск github issue с использованием annotated steps")
-    @DisplayName("Проверка отображения issue")
+    @Description("Проверка отображения issue с использованием annotated steps")
     final void shouldDisplayGithubIssueAnnotatedSteps() {
         Websteps steps = new Websteps();
 
